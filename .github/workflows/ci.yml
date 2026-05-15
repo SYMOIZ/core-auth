@@ -26,8 +26,8 @@ jobs:
       REDIS_URL: redis://localhost:6379
       ACCESS_TOKEN_SECRET: ci-access-secret-do-not-use-in-prod
       REFRESH_TOKEN_SECRET: ci-refresh-secret-do-not-use-in-prod
-      ACCESS_TOKEN_EXPIRE_MINUTES: 15
-      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
 
     steps:
       - name: Checkout source code
@@ -50,35 +50,19 @@ jobs:
         run: |
           echo "Waiting for Redis..."
           for i in {1..10}; do
-            if uv run python -c "
-import asyncio, redis.asyncio as r
-async def p():
-    c = r.from_url('redis://localhost:6379')
-    res = await c.ping()
-    await c.aclose()
-    print('Redis ready:', res)
-asyncio.run(p())
-            "; then
+            if uv run python -c "import asyncio, redis.asyncio as r; asyncio.run(r.from_url('redis://localhost:6379').ping())"; then
+              echo "Redis is ready"
               break
             fi
-            echo "Retry $i..."
+            echo "Retry $i"
             sleep 2
           done
 
-      - name: Stage 2 - Linter Engine (flake8)
-        run: |
-          uv run flake8 app/ tests/ \
-            --max-line-length=88 \
-            --extend-ignore=E501 \
-            --statistics \
-            --count
+      - name: Stage 2 - Linter Engine
+        run: uv run flake8 app/ tests/ --max-line-length=88 --extend-ignore=E501 --statistics --count
 
-      - name: Stage 3 - Static Security Audit (bandit)
-        run: |
-          uv run bandit -r app/ -ll --format txt
+      - name: Stage 3 - Static Security Audit
+        run: uv run bandit -r app/ -ll --format txt
 
-      - name: Stage 4 - Async Test Suites (pytest)
-        run: |
-          uv run pytest tests/ -v \
-            --asyncio-mode=auto \
-            --tb=short
+      - name: Stage 4 - Async Test Suites
+        run: uv run pytest tests/ -v --asyncio-mode=auto --tb=short
