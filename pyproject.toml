@@ -1,0 +1,32 @@
+[project]
+name = "auth-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "alembic>=1.18.4",
+    "anyio>=4.13.0",
+    "asyncpg>=0.31.0",
+    "bandit>=1.9.4",
+    "bcrypt<4.0.0",
+    "fastapi[standard]>=0.136.1",
+    "flake8>=7.3.0",
+    "httpx>=0.28.1",
+    "passlib[bcrypt]>=1.7.4",
+    "pydantic-settings>=2.14.1",
+    "pydantic[email]>=2.13.4",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.3.0",
+    "python-dotenv>=1.2.2",
+    "python-jose[cryptography]>=3.5.0",
+    "redis>=7.4.0",
+    "sqlalchemy[asyncio]>=2.0.49",
+    "uvicorn[standard]>=0.47.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
